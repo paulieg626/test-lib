@@ -11,7 +11,7 @@ public class Launges{
 	public static String Bracket = "(\\(|\\[|\\{|\\)|\\]|\\})";
     public static String Bracket1 = "(\\(|\\[|\\{)"; // (
     public static String Bracket2 = "(\\)|\\]|\\})"; // )
-    public static String Comment = "/\\*(?:.|[\\n\\r])*?\\*/|//(.*|[^\n])";
+    public static String Comment = "(/\\*(?:.|[\\n\\r])*?\\*/|(?m)//(.+?)(?=//|$))";
 	
     public static int findClosingBracket(String str,String b,int level) {
         if (str.indexOf(b.charAt(1)) == -1) {

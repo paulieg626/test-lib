@@ -137,15 +137,32 @@ public class EditTextMMC extends EditTextSelect {
 				@Override public void afterTextChanged(Editable s) {
 					removeSpans(s, ForegroundColorSpan.class);
 					removeSpans(s, UnderlineSpan.class);
+					ArrayList<HashMap<Integer,Integer>>quote=new ArrayList<HashMap<Integer,Integer>>();
+					boolean c = false;
 					for (ColorScheme scheme : schemes) {
 						for(Matcher m = scheme.pattern.matcher(s); m.find();) {
-                            if(!String.valueOf(scheme.pattern).equals(Launges.Color)){
-                                s.setSpan(new ForegroundColorSpan(scheme.color),m.start(),m.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            }else{
+                            if(String.valueOf(scheme.pattern).equals(Launges.Color)){
                                 String color = m.group().toString().replace("\"","").replace("[","").replace("]","");
                                 s.setSpan(new ForegroundColorSpan(Color.parseColor(color)),m.start(),m.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                                 UnderlineSpan underline = new UnderlineSpan();
                                 s.setSpan(underline, m.start(), m.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }else if(String.valueOf(scheme.pattern).equals(Launges.Quote)){
+								final HashMap<Integer,Integer> map = new HashMap<Integer,Integer>();
+								map.put(1,m.start());//меньше
+								map.put(2,m.end());//больше
+								quote.add(map);
+								s.setSpan(new ForegroundColorSpan(scheme.color),m.start(),m.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+							}else if(String.valueOf(scheme.pattern).equals(Launges.Comment)){
+								c = true;
+								for(HashMap<Integer,Integer>g:quote){
+									if((g.get(1)<m.start()&&g.get(2)>m.start())){
+										c = false;
+									}
+								}
+								if(quote.size()==0)c=true;
+								if(c)s.setSpan(new ForegroundColorSpan(scheme.color),m.start(),m.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+							}else{
+                                s.setSpan(new ForegroundColorSpan(scheme.color),m.start(),m.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
 						}
 					}
